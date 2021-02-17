@@ -40,7 +40,7 @@ export default {
     
     watchEffect( () => {
       if( !imageTag.value ) return;
-      isInView.value = top.value + (window.innerHeight * 1.5) > imageTag.value.offsetTop;
+      isInView.value = top.value + (window.innerHeight * 2) > imageTag.value.offsetTop;
     });
 
     const image = computed( () => {
@@ -86,12 +86,13 @@ li.image-item {
   overflow: hidden;
   opacity:0;
   transition: opacity 0s ease-in-out;
+  transition-delay: 0s;
 }
 
 li.showing {
   opacity:1;
   transition: opacity 1s ease-in-out;
-
+  transition-delay: 0.5s;
 }
 
 li > img {
