@@ -38,6 +38,7 @@ ul.image-grid {
 
 @media screen and (max-width:600px) {
   ul.image-grid {
+    margin:0 20px;
     grid-template-columns: 1fr;
   }
 }

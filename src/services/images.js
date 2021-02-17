@@ -2,7 +2,7 @@ import { reactive, toRefs } from "vue";
 import { ImageData } from "../data/imagedata";
 
 const imageState = reactive({
-  imageBase: "https://andrewwalpole.s3-us-west-1.amazonaws.com/art/", //"/local/art/", //
+  imageBase: "/local/art/", //"https://andrewwalpole.s3-us-west-1.amazonaws.com/art/", //
   images: ImageData,
 });
 

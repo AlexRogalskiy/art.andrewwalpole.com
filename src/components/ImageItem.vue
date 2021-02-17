@@ -5,7 +5,10 @@
       </template>
       <template v-else-if="mediaType === 'info'">
         <section>
+          <div>
+          <img src="/profile.png" alt="" width="128">
           <h1>Generative Art by Andrew Walpole</h1>
+          </div>
           <ul>
             <li><a href="https://twitter.com/walpolea" target="_blank">@walpolea</a> on twitter</li>
             <li><a href="https://instagram.com/andrewwalpole" target="_blank">@andrewwalpole</a> on instagram</li>
@@ -103,7 +106,7 @@ export default {
 
 li.image-item {
   /* max-height:400px; */
-  overflow: hidden;
+  // overflow: hidden;
   opacity:0;
   transition: opacity 0s ease-in-out;
   transition-delay: 0s;
@@ -146,11 +149,10 @@ li > img {
 }
 
 .info {
+  align-self: center;
   opacity:1 !important;
   grid-column: 2 / -2;
-  grid-row: 3 / span 3;
-
-  // background: #000;
+  grid-row: 3 / span 4;
   text-align:left;
   padding:5% 8%;
 
@@ -161,8 +163,10 @@ li > img {
     min-height:500px;
     display:grid;
     grid-template-columns: 1fr;
-    grid-auto-rows: 1fr;
+    // grid-auto-rows: 1fr;
+    gap:5%;
     align-items: end;
+    text-align: center;;
 
     ul {
       flex:1;
@@ -172,6 +176,7 @@ li > img {
       margin:0;
       display:flex;
       flex-wrap: wrap;
+      
 
       li {
         padding:0;
@@ -181,10 +186,16 @@ li > img {
         flex:1;
       }
     }
+
+    img {
+      display:inline-block;
+      vertical-align: bottom;
+    }
     
     h1 {
       flex:1;
       font-size:3rem;
+      display:block;
     }
 
     a {
@@ -221,7 +232,7 @@ li > img {
   }
 
   .info {
-    grid-row: 2 / span 3;
+    grid-row: 2 / span 4;
     grid-column: 1 / -2;
   }
 }
@@ -237,7 +248,7 @@ li > img {
   }
 
   .info {
-    grid-row: 1 / span 3;
+    grid-row: 1 / span 4;
     grid-column: 1 / span 1;
   }
 }
