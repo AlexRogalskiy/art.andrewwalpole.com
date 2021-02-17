@@ -1,12 +1,27 @@
 <template>
     <li class="image-item" :class="classes">
-      <img :src=image loading="lazy" ref="imageTag">
+      <template v-if="mediaType === 'image'">
+        <img :src=image loading="lazy" ref="imageTag">
+      </template>
+      <template v-else-if="mediaType === 'info'">
+        <section>
+          <h1>Generative Art by Andrew Walpole</h1>
+          <ul>
+            <li><a href="https://twitter.com/walpolea" target="_blank">@walpolea</a> on twitter</li>
+            <li><a href="https://instagram.com/andrewwalpole" target="_blank">@andrewwalpole</a> on instagram</li>
+            <li>website: <a href="andrewwalpole.com" target="_blank">andrewwalpole.com</a></li>
+          </ul>
+          <p class="copyright">copyright &copy; {{new Date().getFullYear()}}</p>
+        </section>
+      </template>
+      <template v-else-if="mediaType === 'video'">
+        <video :src=image autoplay muted ref="imageTag"></video>
+      </template>
     </li>
 </template>
 
 <script>
-import { ref, computed, onMounted, watch, watchEffect } from 'vue';
-// import { ref } from 'vue'
+import { ref, computed, onMounted, watchEffect } from 'vue';
 import useImages from '../services/images'; 
 import {useScrollTop} from '../services/scrollTop'; 
 
@@ -22,19 +37,24 @@ export default {
     const imageTag = ref(null);
 
     onMounted( () => {
+      if( imageTag.value )
       isInView.value = window.scrollY + window.innerHeight + 1200 > imageTag.value.offsetTop;
     });
 
     const { get400, get800, get1600 } = useImages();
     const top  = useScrollTop();
     const imageData = ref(props.imageData);
+    const mediaType = ref(imageData.value.type || 'image');
     
     let startingSize = Math.random() > 0.25 ? 'small' : Math.random() > 0.3 ? 'medium' : 'large';
     startingSize = imageData.value.tall ? Math.random() > 0.5 ? 'small' : 'medium' : startingSize;
     startingSize = imageData.value.size ? imageData.value.size : startingSize;
 
-    const size = ref(startingSize);
+    if(mediaType.value === "info") {
+      console.log(startingSize)
+    }
 
+    const size = ref(startingSize);
     const isInView = ref(false);
     const everInView = ref(false);
     
@@ -70,16 +90,16 @@ export default {
 
 
     const classes = computed( ()=> {
-      return {[size.value]:true, 'showing':isInView.value, 'tall':imageData.value.tall}
+      return {[size.value]:true, 'showing':isInView.value, 'tall':imageData.value.tall, [mediaType.value]:true}
     });
     
-    return { imageTag, image, size, imageData , classes, isInView, everInView, top};
+    return { imageTag, mediaType, image, size, imageData , classes, isInView, everInView, top};
   }
 
 }
 </script>
 
-<style scoped>
+<style scoped lang='scss'>
 
 li.image-item {
   /* max-height:400px; */
@@ -125,14 +145,63 @@ li > img {
 
 }
 
-@media screen and (max-width:800px) {
-  .small, .medium, .large {
-    grid-column: span 1;
-    grid-row:span 1;
-  }
+.info {
+  opacity:1 !important;
+  grid-column: 2 / -2;
+  grid-row: 3 / span 3;
 
-  .tall {
-    grid-row:span 2;
+  // background: #000;
+  text-align:left;
+  padding:5% 8%;
+
+  section {
+
+    color:#fff;
+    width:100%;
+    min-height:500px;
+    display:grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: 1fr;
+    align-items: end;
+
+    ul {
+      flex:1;
+
+      list-style: none;
+      padding:0;
+      margin:0;
+      display:flex;
+      flex-wrap: wrap;
+
+      li {
+        padding:0;
+        margin:0;
+        margin-bottom:20px;
+        margin-right:40px;
+        flex:1;
+      }
+    }
+    
+    h1 {
+      flex:1;
+      font-size:3rem;
+    }
+
+    a {
+      color:#ccc;
+      font-weight:bold;
+      text-decoration: none;
+      font-size:2rem;
+
+      &:hover {
+        color: #ff6666;
+      }
+    }
+
+    .copyright {
+      margin-bottom:40px;
+    }
+
   }
 }
 
@@ -150,6 +219,30 @@ li > img {
   .tall {
     grid-row:span 3;
   }
+
+  .info {
+    grid-row: 2 / span 3;
+    grid-column: 1 / -2;
+  }
 }
+
+@media screen and (max-width:800px) {
+  .small, .medium, .large {
+    grid-column: span 1;
+    grid-row:span 1;
+  }
+
+  .tall {
+    grid-row:span 2;
+  }
+
+  .info {
+    grid-row: 1 / span 3;
+    grid-column: 1 / span 1;
+  }
+}
+
+
+
 
 </style>
