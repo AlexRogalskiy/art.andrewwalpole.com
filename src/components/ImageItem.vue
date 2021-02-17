@@ -15,7 +15,7 @@
         </section>
       </template>
       <template v-else-if="mediaType === 'video'">
-        <video :src=image autoplay muted ref="imageTag"></video>
+        <video :src=image autoplay muted loop ref="imageTag"></video>
       </template>
     </li>
 </template>
