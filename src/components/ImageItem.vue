@@ -1,18 +1,18 @@
 <template>
     <li class="image-item" :class="classes">
       <template v-if="mediaType === 'image'">
-        <img :src=image loading="lazy" ref="imageTag">
+        <img :src=image loading="lazy" ref="imageTag" @click="showModal">
       </template>
       <template v-else-if="mediaType === 'info'">
         <section>
           <div>
-          <img src="/profile.png" alt="" width="128">
+          <img src="/profile.png" alt="" width="196">
           <h1>Generative Art by Andrew Walpole</h1>
           </div>
           <ul>
-            <li><a href="https://twitter.com/walpolea" target="_blank">@walpolea</a> on twitter</li>
-            <li><a href="https://instagram.com/andrewwalpole" target="_blank">@andrewwalpole</a> on instagram</li>
-            <li>website: <a href="andrewwalpole.com" target="_blank">andrewwalpole.com</a></li>
+            <li><a href="https://twitter.com/walpolea" target="_blank">@walpolea</a><br>on twitter</li>
+            <li><a href="https://instagram.com/andrewwalpole" target="_blank">@andrewwalpole</a><br>on instagram</li>
+            <!-- <li>website:<br><a href="andrewwalpole.com" target="_blank">andrewwalpole.com</a></li> -->
           </ul>
           <p class="copyright">copyright &copy; {{new Date().getFullYear()}}</p>
         </section>
@@ -29,10 +29,18 @@ import useImages from '../services/images';
 import {useScrollTop} from '../services/scrollTop'; 
 
 export default {
+  emits: ['showImage'],
   props: {
     imageData: {
       type: Object,
       required:true
+    }
+  },
+  methods: {
+    showModal() {
+      if( this.imageData ) {
+      this.$emit('showImage', this.get1600(this.imageData), this.imageData.tall );
+      }
     }
   },
   setup( props ) {
@@ -52,10 +60,8 @@ export default {
     let startingSize = Math.random() > 0.25 ? 'small' : Math.random() > 0.3 ? 'medium' : 'large';
     startingSize = imageData.value.tall ? Math.random() > 0.5 ? 'small' : 'medium' : startingSize;
     startingSize = imageData.value.size ? imageData.value.size : startingSize;
-
-    if(mediaType.value === "info") {
-      console.log(startingSize)
-    }
+    startingSize = window.innerWidth <= 800 && startingSize === 'large' ? 'medium' : startingSize;
+    startingSize = window.innerWidth <= 400 ? 'small' : startingSize;
 
     const size = ref(startingSize);
     const isInView = ref(false);
@@ -91,12 +97,11 @@ export default {
 
 
 
-
     const classes = computed( ()=> {
       return {[size.value]:true, 'showing':isInView.value, 'tall':imageData.value.tall, [mediaType.value]:true}
     });
     
-    return { imageTag, mediaType, image, size, imageData , classes, isInView, everInView, top};
+    return { imageTag, mediaType, image, size, imageData , classes, isInView, everInView, top, get400, get800, get1600};
   }
 
 }
@@ -110,6 +115,7 @@ li.image-item {
   opacity:0;
   transition: opacity 0s ease-in-out;
   transition-delay: 0s;
+  overflow:hidden;
 }
 
 li.showing {
@@ -122,6 +128,16 @@ li > img {
   width:100%;
   height:100%;
   object-fit: cover;
+  
+  transition:transform 2s;
+  transform:scale(1);
+  transform-origin: center;
+
+  cursor: pointer;
+
+  &:hover {
+      transform:scale(1.05);
+  }
 }
 
 .small {
@@ -149,16 +165,38 @@ li > img {
 }
 
 .info {
+  --bg-color:#222;
+  --text-color:#fff;
+  --link-color:#eb3e45;
+
   align-self: center;
   opacity:1 !important;
   grid-column: 2 / -2;
   grid-row: 3 / span 4;
   text-align:left;
-  padding:5% 8%;
+  padding:5% 7%;
+  height:100%;
+  display:grid;
+  grid-template-columns: 1fr;
+  place-items: center;
+  
+  background-color:var(--bg-color);;
+  color:var(--text-color);
+
+  transition: background-color 1.5s, color 1s !important;
+
+
+  &:hover {
+    --bg-color:#eb3e45;
+    --text-color:#222;
+
+    a {
+      --link-color:#222;
+    }
+  }
 
   section {
 
-    color:#fff;
     width:100%;
     min-height:500px;
     display:grid;
@@ -166,7 +204,7 @@ li > img {
     // grid-auto-rows: 1fr;
     gap:5%;
     align-items: end;
-    text-align: center;;
+    text-align: center;
 
     ul {
       flex:1;
@@ -199,13 +237,14 @@ li > img {
     }
 
     a {
-      color:#ccc;
       font-weight:bold;
       text-decoration: none;
       font-size:2rem;
 
+      color:var(--link-color);
+      transition: color 0.5s;
       &:hover {
-        color: #ff6666;
+        color: #fff;
       }
     }
 

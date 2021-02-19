@@ -15,6 +15,10 @@ import ImageGrid from './components/ImageGrid.vue'
   text-align: center;
 }
 
+* {
+  box-sizing:border-box;
+}
+
 body {
   margin:0;
   background:#121212;
